@@ -1,3 +1,4 @@
+
 =begin
 class Person
   def initialize(n)
@@ -85,7 +86,7 @@ class Person
   end
 end
 
-Person.titles                   # => "Mr, Mrs, Ms, Dr"
+p Person.titles                   # => "Mr, Mrs, Ms, Dr"
 
 bob = Person.new('bob')
-bob.name                        # => "Ms bob"  (output may vary)
+p bob.name                        # => "Ms bob"  (output may vary)

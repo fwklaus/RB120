@@ -77,6 +77,7 @@ end
 spike = Dog.new
 p spike.total_animals                           # => 1
 
+# Only one copy of a class variable across all subclasses. Makes the combination of class inheritance and class variables a dangerous one
 
 class Vehicle
   @@wheels = 4
@@ -115,7 +116,7 @@ end
 kitty = Cat.new
 kitty.legs                                  # => NameError: uninitialized constant Cat::LEGS
 
-# accessing a constant initialized in another class using the namespace resilution operator (::)
+# accessing a constant initialized in another class using the namespace resolution operator (::)
 class Dog
   LEGS = 4
 end
@@ -130,6 +131,7 @@ kitty = Cat.new
 p kitty.legs                                  # => 4
 
 # The constant initialized in a superclass is inherited, and available to the subclass by both class and instance methods 
+
 class Vehicle
   WHEELS = 4
 end
@@ -149,7 +151,8 @@ p Car.wheels                                  # => 4
 a_car = Car.new
 p a_car.wheels                                # => 4
 
-# the WHEELS constant is unavailable to the mixed in module
+# the WHEELS constant is unavailable to the instance method in the module mixed in with the class that inherits from the class where the constant was initialized
+
 module Maintenance
   def change_tires
     "Changing #{WHEELS} tires."

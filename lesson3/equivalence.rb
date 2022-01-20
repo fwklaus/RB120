@@ -61,6 +61,7 @@ bob == bob_copy            # => true
 
 
 # overriding == so we check the equivalency of the value assigned to local variables bob and bob2
+
 class Person
   attr_accessor :name
 
