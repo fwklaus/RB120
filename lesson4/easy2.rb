@@ -1,192 +1,72 @@
+# Reviews: |
+
+# 1. 
+# On `line 1`, we instantiate object `oracle` of type `Oracle`. We then call instance method `predict_the_future` on the `oracle` object, which returns a string. The string the method returns is the result of concatenating a string with another string returned by calling method `sample` on instance method `choices`, which returns an array of strings. The code, when run, will return some random string. 
+
+# 2.
+# We call method `predict_the_future` on our `trip` object. Ruby finds the method in `Oracle`, which sublcasses `RoadTrip`. The method concatenates string `You will` with the value returned by calling method `sample` on the array of string returned by method `choices`. Even though `predict_the_future` is found in `Oracle`, Ruby, looks for method `choices` in the subclass which overrides `choices` in class `Oracle`. The call returns "You will" concatenated with a string from Roadtrip#choices array. 
+
+# 3.
+# The method lookup chain tells you where Ruby will look for a method when the method is called. Ruby starts in the class of the calling object. From there, if the method isn't found, it looks in mixin modules if any are included, starting with the last. After that it looks in any inherited classes, and finally, it defaults to the two classes and module that all classes inherit from: `Object`, `Kernel`, and `BasicObject`. An easy way to find the object's ancestors is to call method `ancestors` on the object's class, which will return an array of class and module names describing the method lookup chain. 
+
+# 4.
+# You could call method `attr_accessor`, which will create default getter and setter method implementations for the sybol passes as an argument at invocation. In this case `attr_accessor :type` would result in the same functionality as the current class definition. 
+
+# 5.
+
+#excited_dog = "excited dog"   # local variable
+#@excited_dog = "excited dog"  # instance variable
+#@@excited_dog = "excited dog" # class variable
+
+# We can tell the first variable is a local variable by the exclusion of the `@` symbol. The second variable includes a single `@` symbol so we know it's an instance variable. The third variable includes two `@@` symbols, so we know it's a class variable
+
+# 6.
+# `self.manufacturer` is a class method. We can tell by the explicit call to self prefixing the method name. To call a class method we can simply call the method name on the class.
+
+# 7.
+# the `@@class_count` variable is a class variable. Each time a `Cat` object is instantiated, the variable is incremented by `1`. The variable tracks the number of instances we've created for class `Cat`. To test the theory we could instantiate a few `Cat` instances, and then call class method `self.cats_count` which returns the value of `@@cats_count`
+
 =begin
-# 1 
-# We instantiate a new object of class Oracle
-# We then call instance method `predict_the_future` on the oracle object referenced by local variable `oracle`. This returns a string where we concatenate string "You will" with a string returned from an invocation to instance method `choices`, which returns an array, with method `sample` called on it, which returns one of the string elements from the array
-
-
-
-
-class Oracle
-  def predict_the_future
-    "You will " + choices.sample
-  end
-  
-  def choices
-    ["eat a nice lunch", "take a nap soon", "stay at work late"]
-  end
-end
-
-oracle = Oracle.new
-p oracle.predict_the_future
-
-# 2
-
-class Oracle
-  def predict_the_future
-    "You will " + choices.sample
-  end
-  
-  def choices
-    ["eat a nice lunch", "take a nap soon", "stay at work late"]
-  end
-end
-
-class RoadTrip < Oracle
-  def choices
-    ["visit Vegas", "fly to Fiji", "romp in Rome"]
-  end
-end
-
-trip = RoadTrip.new
-puts trip.predict_the_future
-
-# We instantiate a new object of class Roadtrip
-# We then call method `predict_the_future` on the `RoadTrip` object referenced by local variable `trip`. This  call returns a string concatenated with a string sampled from the array returned from method `choices` in class `Roadtrip`. The call outputs "You will <somethind>", which will be either "visit Vegas, "fly to Fiji", or "romp in Rome" 
-
-# 3
-
-module Taste
-  def flavor(flavor)
-    puts "#{flavor}"
-  end
-end
-
-class Orange
-  include Taste
-end
-
-class HotSauce
-  include Taste
-end
-
-p Orange.ancestors
-p HotSauce.ancestors
-
-# To find an object's ancestors, we can call method `ancestors` on a class to display the method lookup chain
-
-# The lookup chain for Orange is: Orange, Taste, Object, Kernel, BasicObject
-# The lookup chain for HotSauce is: HotSauce, Taste, Object, Kernel, BasicObject
-
-# 4
-
-# replace the custom getter and setter methods with methods created by invoking `attr_accessor`
-
-class BeesWax
-  attr_accessor :type
-  
-  def initialize(type)
-    @type = type
-  end
-  
-  # def type
-  #   @type
-  # end
-  
-  # def type=(t)
-  #   @type = t
-  # end
-  
-  def describe_type
-    puts "I am a #{type} type of Bees Wax"
-  end
-end
-
-burt = BeesWax.new("yellow")
-burt.describe_type
-
-# 5
-
-The first variable is a local variable. The second variable is an instance variable. The third variable is a class variable. The syntax tells us everthing we need to know. The local variable is named without an @ symbol prepended. The instance variable has one @ prepended. The class variable has two @ symbols prepended
-
-
-excited_dog = "excited dog"
-@excited_dog = "excited dog"
-@@excited_dog = "excited dog"
-
-
-# 6
-
-class Television
-  def self.manufacturer
-    # method logic
-  end
-  
-  def model
-    # method logic
-  end
-end
-
-# the method defined with the self invocation is the class method. To invoke it, call the method directly on the class
-
-p Television.manufacturer
-
-# 7
-
 class Cat
   @@cats_count = 0
-  
+
   def initialize(type)
     @type = type
     @age  = 0
     @@cats_count += 1
   end
-  
+
   def self.cats_count
     @@cats_count
   end
 end
 
-# The @@cats_count method is a class variable. We initialize it to integer value `0`. In the constructor method, we increment the value of the class variable by 1 each time we instantiate a new instance of class Cat. We can instantiate a few objects of type Cat, and then call the class method `self.cats_count` to output the value of the class variable, which records the number of cat instances that have been created
+Cat.new("Tiger")
+Cat.new("spotted")
+Cat.new("Yorkshire")
+Cat.new("Siamese")
 
-Cat.new("Tom")
-Cat.new("Garfield")
-Cat.new("Scratchy")
+p Cat.cats_count
+=end
 
-puts Cat.cats_count
+# 8.
+# We can simply add the inheritance symbol (<) following the class name followed by the class we'd like to inherit, in this case `Game`. This would give us access to all of the `Game` methods. 
 
-# 8
+# 9.
+# If we added a `play` method to the `Bingo` class the subclass method would override the superclass method. Whenever we call `play`, Ruby would then find the method in `Bingo`, and execute it. Ruby stops method lookup when it finds the method it wants to invoke. 
 
-class Game
-  def play
-    "Start the game!"
-  end
-end
-
-class Bingo < Game
-  def rules_of_play
-    #rules of play
-  end
-end
-
-# We can add the inheritance symbol and the name of the class we'd like to inherit from 
-
-puts Bingo.new.play
-
-# 9 
-
-class Game
-  def play
-    "Start the game!"
-  end
-end
-
-class Bingo < Game
-  def rules_of_play
-    #rules of play
-  end
-  
-  def play
-    "The first number is..."
-  end
-end
-
-# If we added a `play` method to the `Bingo` class, this method would overrided the inherited method from class `Game`
-
-puts Bingo.new.play
-
-# 10
-
-OOP allows you to write programs that are the interaction of many small parts rather than a single large dependecy. Encapsulation allows you to write modular, reusable pieces of code that are only available for specific use cases to specific classes. Polymorphism allows you to not have to repeat yourself, using the implementation for inherited methods rather than having to provide your own for every particular behavior you'd like to model. Polymorphism also allows you to ovveride method names which allows for objects of different types to respond differently to the same method invocations. This allows for you to customize behavior and write reusable code without having to refer back to implementation details. Instance variables allow you tie data to objects that only pertains to specific objects. Class variables allow you to track class level details which can interact with the state of different objects. Overall, OOP allows for you to write complex problems in a manageable, modular, and concise way. 
+=begin
+ 10.
+ The benefits of OOP:
+      - It allows us to work at a higher level of abstraction by using real world nouns and verbs to represent the states and behaviors we're trying to model for a program
+      - It makes it so that our programs function like a multitude of interconnected parts, rather than a single large dependency
+      - Through polymorphism and inheritance OOP allows us to define reusable generalized classes that can be sublcassed for specialization. 
+               - This helps us keep our code DRY(Don't repeat yourself)
+                 which makes it easier to maintain our code and make changes. 
+                      - This allows for specialization, since we only need to change our code in one place
+                      - It also allows us to resuse re-written code making writing programs much faster
+      - Encapsulation lets us hide functionality from  the outside world, choosing how and what state and behavior are available for outside use
+              - this keeps our data more secure, and less prone to outside changes
 
 
 =end

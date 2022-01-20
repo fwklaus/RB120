@@ -1,67 +1,20 @@
-require 'pry'
-=begin
+# Reviews: |
+
 # 1
+# Ben is right. We are using a getter method here on `line 9` when we reference `balance`. This is perfectly valid. Alyssa's solution is also valid. We can reference the instance variable directly, however, it is a good idea to use the getter method if one is available. In this case it would't make much of a difference. 
 
-class BankAccount
-  attr_reader :balance
-  
-  def initialize(starting_balance)
-    @balance = starting_balance
-  end
-  
-  def positive_balance?
-    balance >= 0
-  end
-end
-
-# Ben is right, although Alyssa's criticism is valid. Ben is using the getter method to return the value of the instance variable rather than directly referencing the instance variable like Alyssa suggests. Both implemntations would work the same here
-
-# 2
-
-class InvoiceEntry
-  attr_reader :quantity, :product_name
-  
-  def initialize(product_name, number_purchased)
-    @quantity = number_purchased
-    @product_name = product_name
-  end
-  
-  def update_quantity(updated_count)
-    # prevent negative quantities from being set
-    quantity = updated_count if updated_count >= 0
-  end
-end
-
-# "This will fail when update_quantity is called"
-#  We need to prepend `quantity` with `self` to call the setter method from the body of method `update_quantity`, and we need to change attr_reader to attr_accessor, or create a call to attr_writer passing quantity as an argument. As it is, this is local variable initialization. 
-
+# 2 
+# On `line 11`, we are  initializing local variable `quantity` if the value passed to the method is greater or equal to 0. We should make an explicit call to `self` here if we want to reference the setter method to update `@quanity`. We would also need to call `attr_accessor` and pass `:quantiy` as an argument since a setter method is not available to call. We currently only have getter methods created from our call to `attr_reader`.
 
 # 3
-
-class InvoiceEntry
-  # attr_reader :quantity, :product_name
-  attr_accessor :quantity, :product_name
-  
-  def initialize(product_name, number_purchased)
-    @quantity = number_purchased
-    @product_name = product_name
-  end
-  
-  def update_quantity(updated_count)
-    self.quantity = updated_count if updated_count >= 0
-  end
-end
-
-# The only problem with this fix might be that we now have getter methods and a setter method that aren't in use. A more appropriate solution might be to just call attr_writer with :quantity passed as an argument
-
-# Changing the public interface to allow clients to directly access instance variables, you need to be sure you aren't bypassing important protections or validation built into your methods 
-
+# No there is nothing wrong with this fix, except we would also create a setter for product name which would then expose the instance variable to outside modifications from client code. It might be better if we create a seperate call to `attr_accessor` passing `:quantity` as an argument, leaving the `:product_name` as an argument in `attr_reader`. This also bypasses any functionality, checks, validation built into the `update_quantity` method by altering the public interface and allowing direct access to updates to the object's state via client code.
 
 # 4
 
+=begin
 class Greeting
-  def greet(message)
-    puts message
+  def greet(str)
+    puts str
   end
 end
 
@@ -69,42 +22,44 @@ class Hello < Greeting
   def hi
     greet("Hello")
   end
-  
 end
 
 class Goodbye < Greeting
-  def bye
+  def goodbye
     greet("Goodbye")
   end
 end
 
-hello = Hello.new
-goodbye = Goodbye.new
+greeting1 = Hello.new
+greeting2 = Goodbye.new
 
-hello.hi
-goodbye.bye
+greeting1.hi
+greeting2.goodbye
+=end
 
 # 5
-
+=begin
+require 'pry'
 class KrispyKreme
+  attr_reader :filling_type, :glazing
+
   def initialize(filling_type, glazing)
-    @filling_type = filling_type
-    @glazing = glazing
+    @filling_type = set_type(filling_type)
+    @glazing = glazing  
   end
-  
-  def filling_type
-    return 'Plain' if @filling_type.nil?
-    @filling_type
+
+  private
+
+  def set_type(filling_type)
+    filling_type.nil? ? "Plain" : filling_type
   end
-  
-  def glazing
-    return '' if @glazing.nil?
-    @glazing
-  end
-  
+
   def to_s
-    return "#{filling_type}" if glazing.empty?
-    "#{filling_type} with #{glazing}"
+    if glazing.nil?
+      "#{filling_type}"
+    else
+      "#{filling_type} with #{glazing}" 
+    end
   end
 end
 
@@ -115,70 +70,24 @@ donut4 = KrispyKreme.new(nil, "chocolate sprinkles")
 donut5 = KrispyKreme.new("Custard", "icing")
 
 puts donut1
-# => "Plain"
+  # => "Plain"
 
 puts donut2
-# => "Vanilla"
+  # => "Vanilla"
 
 puts donut3
-# => "Plain with sugar"
+  # => "Plain with sugar"
 
 puts donut4
-# => "Plain with chocolate sprinkles"
+  # => "Plain with chocolate sprinkles"
 
 puts donut5
-# => "Custard with icing"
+  # => "Custard with icing"
 
-# 6 
-class Computer
-  attr_accessor :template
-  
-  def create_template
-    @template = "template 14231"
-  end
-  
-  def show_template
-    template
-  end
-end
-
-class Computer
-  attr_accessor :template
-
-  def create_template
-    self.template = "template 14231"
-  end
-  
-  def show_template
-    self.template
-  end
-end
-
-cpu = Computer.new
-cpu.create_template
-puts cpu.show_template
-
-# With the first implementation, we don't initialize instance variable @template until instance method create_template is called. We access the instance variable directly
-
-# Wtih the second implementation, we access instance variable template through the use of a setter method once instance method create_template is called. In our show_template method, self is prefixed to a call to the template getter, which is a little redundant
 =end
 
+# 6
+# The difference between the two implementations is the way in which we reference instance variable `template`. In the first example we set the value of instance variable `@template` directly, while in the second we rely on our setter method to do this. In method `show_template`, we call getter method `template` to return the value of `@template`, while in the second example we make an explicit to self to return the value of `@template`. Both are valid ways to refernce our instance variable. 
+
 # 7
-
-class Light
-  attr_accessor :brightness, :color
-
-  def initialize(brightness, color)
-    @brightness = brightness
-    @color = color
-  end
-
-  def status
-    "I have a brightness level of #{brightness} and a color of #{color}."
-  end
-end
-
-light = Light.new("bright", 'blue')
-
-puts light.status
-
+# I would change the method name of `light_status` to `status`. `Light#light_status` is a bit redundant. `Light#status` is a bit more clear.  

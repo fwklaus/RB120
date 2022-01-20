@@ -1,187 +1,81 @@
-=begin
-#1
+# Review: |
 
-class Greeting
-  def greet(message)
-    puts message
-  end
-end
+# 1
+# case 1:
+#   We instantiate a `hello` object from class `Hello`, and call instance method `hi` on it. `hi` calls method greet, pasing a single string argument 'Hello'. Ruby looks in the parent class and finds `greet` where it outputs its argument, in this case string `Hello`. 
 
-class Hello < Greeting
-  def hi
-    greet("Hello")
-  end
-end
+# case 2:
+# We instantiate a `hello` object from class `Hello`, and call instance method `bye` on it. Instance method `bye` is defined in class `Goodbye`, which inherits from class `Greeting` as does class `Hello`. Despite this, `bye` is inaccessible from `Hello` objects. This will throw an exception - undefined method error
 
-class Goodbye < Greeting
-  def bye
-    greet("Goodbye")
-  end
-end
+# case 3:
+#  We instantiate an object named `hello` from class `Hello` and call method `greet` on the object. Since `Hello` derives from class `Greetig`, method greet is available, however, since we do not supply the method an argument at invoaction, the call throws an exception: Argumenet error. Expected 1 argument, 0 received. 
 
-# case 1
-# hello = Hello.new
-# hello.hi
+# case 4:
+# We instantiate an object named `hello` from class `Hello`, and call method `greet` on it, passing string `Goodbye` as an argument. The method is inherited from class `Greeting`, and outputs the string passed to it, and returns `nil`.
 
-# We are instantiating a new instance of class `Hello``
-# We then call instance method `hi` on the `Hello` object which calls
-#     method `greet` inherited from class `Greeting`, which outputs the 
-#         argument : string `Hello`.
-
-# case 2
-# hello = Hello.new
-# hello.bye
-
-# We instantiate a new instance of class `Hello` which is assigned to local variable `hello` . We then call instance method `bye` on `hello`. Instance method `bye` is defined in class `Goodbye`, which class `Hello` does not inherit from. The method is unavailable to class `Hello`, so some kind of exception will be thrown, maybe a `NoMethodError`
-
-# case 3
-# hello = Hello.new
-# hello.greet
-
-# We again instantiate a `Hello` object and assign it to local variable `hello`. We then call instance method `greet` inherited from class `Greeting` on the object referenced by `hello`. The method expects an argument, so an exception will likely be thrown: "ArgumentError"; Exepected 1 argument, received 0
-
-# case 4
-
-hello = Hello.new
-hello.greet("Goodbye")
-
-# We instantiate a `Hello` object and assign it to local variable `hello`. We then call instance method `greet`, inherited from class `Greeting` and pass it a single string agumetn `Goodbye`, which is what the body of the method call outputs
-
-# case 5
-
-Hello.hi
-
-# Here we are invoking class mehtod self.hi of class `Hello`, which is undefined. This will throw an exception: "NoMethodError"
-
+# case 5:
+# We attempt to invoke a class method by appending method `hi`, which is an instance method, to class `Hello`. This will throw an exception.  This method does not exist. To call intance method `hi`, we need to call it on an object instance, not a class. Undefined method error
 
 # 2
-
-class Greeting
-  def greet(message)
-    puts message
-  end
-end
-
-class Hello < Greeting
-  def self.hi
-    greeting = Greeting.new
-    greeting.greet("Hello")
-  end
-end
-
-class Goodbye < Greeting
-  def bye
-    greet("Goodbye")
-  end
-end
-
-# hello = Hello.new
-# hello.hi
-
-Hello.hi
-
-# We are calling instance method `hi` on class `Hello`. To call the method, we first need to instantiate a `Hello` object 
-
-# Alternatively, we could redefine method `hi` as a class method which requires that we instantiate a new object of class `Greeting` within the method before calling method `greet` on it, as method `greet` is defined as an instance method, and is unaccessable to the class method 
+# we would need to define a class method `self.hi` for the invocation to be valid, and then we would need to call greet on an instance of the class so we can call instance method `greet` on it. Classes define instance methods for instances, not on the class itself. 
 
 # 3
-
-class AngryCat
-  def initialize(age, name)
-    @age  = age
-    @name = name
-  end
-  
-  def age
-    puts @age
-  end
-  
-  def name
-    puts @name
-  end
-  
-  def hiss
-    puts "Hisssss!!!"
-  end
-end
-
-
-tom = AngryCat.new(75, "Tom")
-garfield = AngryCat.new(63, "Garfield")
-
-tom.age
-garfield.age
-tom.hiss
-garfield.name
+# We would need to instantiate two AngryCat objects, passing each two arguments - age, and name - to initialize the state for the objects. We would save those objects to a variable, otherwise, the objects will no longer exist after instantiation. 
 
 # 4
+# Object#to_s is the default implementation for to_s, so if we were to call to_s on an object of type `Cat`, Ruby would traverse the class hierarchy to find to_s in `Object`. We should override to_s in the `Cat` class to create a different implementation for `Cat` objects.
 
+=begin
 class Cat
   attr_reader :type
+
   def initialize(type)
     @type = type
   end
-  
+
   def to_s
     "I am a #{type} cat"
   end
 end
 
-tabby = Cat.new("tabby")
-puts tabby
-
+puts Cat.new("tabby")
+=end
 
 # 5
+# We instantiate an object named `tv` from class `Television`. We then call instance method `manufacturer` on the object which throwns an exception: NoMethodError. Then we call instance method `model` on `tv` which returns whatever the method returns(`nil` in this case since the body is empty). Then we call class method `self.manufacturer`, which returns whatever that returns. Then we call `self.model`, which doesn't exist, and throws another NoMethodError
 
+=begin
 class Television
   def self.manufacturer
     # method logic
   end
-  
+
   def model
     # method logic
   end
 end
 
+tv = Television.new
 
-
-tv = Television.new  # instantiating a new class object
-tv.manufacturer    # NoMethodError
-tv.model    # executes body of instance method `model`
-
-Television.manufacturer  # executes body of class method `self.manufacturer`
-Television.model # NoMethodError
-
-class Cat
-  attr_accessor :type, :age
-  
-  def initialize(type)
-    @type = type
-    @age  = 0
-  end
-  
-  def make_one_year_older
-    @age += 1  
-  end
+begin
+  tv.manufacturer
+rescue NoMethodError => e
+  puts e.message 
 end
 
-# we can just remove the `self` prefix. In this context it refers to the calling object. The `self` prefex here is used to disambiguate a reference to a local variable from in invocation to a setter method, which it is. Without the use of `self`, we can instead just call the instance variable directly 
+p tv.model
+
+p Television.manufacturer
+
+begin
+  Television.model
+rescue NoMethodError => e
+  puts e.message
+end
 =end
 
+# 6
+# The `self` prefix on `line 10` is used to reference the setter method `age`. We could increment the value of the instance variable directly like so: `@age += 1`. As long as we have a getter method, this is not adivised since we would override any functionality the getter method may implement. In this case, working directly on the instance variable has no unintended effect 
+
 # 7
-
-class Light
-  attr_accessor :brightness, :color
-
-  def initialize(brightness, color)
-    @brightness = brightness
-    @color = color
-  end
-
-  def self.information
-    return "I want to turn on the light with a brightness level of super high and a color of green"
-  end
-
-end
-
-# The `return` keyword in class method `information` is redundant as the string would be returned implicitly in this case. Also we never use the setter or getter methods which are created by the call to `attr_accessor` on the first line of the class
+# Presently, we have setter and getter methods created by our `attr_accessor` call which aren't used in any way. The explicit `return` on `line 10` is also useless. If we wanted this code to work, we would also remove the `self` prefix from class method `self.information` to make it an instance method, so we could interpolate getter method calls in the sting the method returns rather than the static string the method currently returns.
